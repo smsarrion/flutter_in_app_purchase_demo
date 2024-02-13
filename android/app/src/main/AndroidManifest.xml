@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wdtheprovider.finapppurchase">
+    package="up.dev.sarri.inapppurchase">
    <application
         android:label="F-InApp"
         android:name="${applicationName}"

@@ -1,4 +1,4 @@
-package com.wdtheprovider.finapppurchase
+package up.dev.sarri.inapppurchase
 
 import io.flutter.embedding.android.FlutterActivity
 
