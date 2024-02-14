@@ -22,7 +22,7 @@ class _SubscriptionsState extends State<Subscriptions> {
       ProductId(id: "annual_subscription", isConsumable: false),
       ProductId(id: "biannual_subscription", isConsumable: false),
       ProductId(id: "quarterly_subscription", isConsumable: false),
-      //ProductId(id: "mensual_subscription", isConsumable: false),
+      ProductId(id: "mensual_subscription", isConsumable: false),
 
     ];
   //iAppEngine
@@ -41,24 +41,39 @@ class _SubscriptionsState extends State<Subscriptions> {
 
 
     getProducts();
+    isSubscribed = OnePref.getPremium() ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Subscriptions')),
-      body: ListView.builder(
-        itemCount: _products.length,
-        itemBuilder: ((context,index){
-        return GestureDetector(
-          child: ListTile(
+      body: Column(
+        children: [
+          Text('is Subscribed: $isSubscribed'),
+          Visibility(visible: !isSubscribed, child: const Text('Showing adds')),
+
+          Padding(padding: const EdgeInsets.all(27.0),
+          child: GestureDetector(
             onTap: () => {
-              iApEngine.handlePurchase(_products[index], _productsIds)
+              iApEngine.inAppPurchase.restorePurchases()
             },
-            title: Text(_products[index].description),
-            trailing: Text(_products[index].price),),
-        );
-      })),
+            child: const Text('Restore subscriptions') )),
+
+          Expanded(
+            child:ListView.builder(
+            itemCount: _products.length,
+            itemBuilder: ((context,index){
+            return GestureDetector(
+              child: ListTile(
+                onTap: () => {
+                  iApEngine.handlePurchase(_products[index], _productsIds)
+                },
+                title: Text(_products[index].description),
+                trailing: Text(_products[index].price),),
+            );
+          })),
+      )]),
     );
   }
   
@@ -85,21 +100,19 @@ Future<void> listenPurchases(List<PurchaseDetails> list) async {
             Map purchaseData = json
               .decode(purchaseDetails.verificationData.localVerificationData);
 
-            if (purchaseData['acknowledge']){
+            if (purchaseData['acknowledged']){
               print('Restore purchase');
-              setState(() {
-                isSubscribed = true;
-                OnePref.setPremium(isSubscribed);
-              });
+              updateIsSub(true);
+
             }else{
               print('First time purchase');
               // Android consume
               if (Platform.isAndroid){
-                final InAppPurchaseAndroidPlatformAddition androidPlatformAddition = 
-                  iApEngine.inAppPurchase
-                  .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
-                await androidPlatformAddition.consumePurchase(purchaseDetails)
-                .then((value) {
+                  final InAppPurchaseAndroidPlatformAddition androidPlatformAddition = 
+                    iApEngine.inAppPurchase
+                    .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
+                  await androidPlatformAddition.consumePurchase(purchaseDetails)
+                    .then((value) {
                   updateIsSub(true);
                 });
               }
