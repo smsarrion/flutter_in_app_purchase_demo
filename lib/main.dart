@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_in_app_purchase_demo/screens/buy_coins.dart';
+import 'package:flutter_in_app_purchase_demo/screens/splash.dart';
 import 'package:flutter_in_app_purchase_demo/screens/subscriptions.dart';
 import 'package:onepref/onepref.dart';
 
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.orange,
         ),
         themeMode: ThemeMode.dark,
-        home: const MyHomePage(),
+        home: const SplashScreen(),
       );
 }
 
